@@ -20,4 +20,8 @@ public class ScoreService {
     public void setClazz() {
         dao.setClazz(Score.class);
     }
+
+    public Score addScore(Score score) {
+        return dao.create(score);
+    }
 }

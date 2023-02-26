@@ -14,6 +14,8 @@ public class CustomerService {
 
     private final AbstractDAO<Customer> dao;
 
+    private final UserService userService;
+
     @Autowired
     public void setClazz() {
         dao.setClazz(Customer.class);
@@ -32,5 +34,13 @@ public class CustomerService {
 
     public List<Customer> getAll() {
         return dao.findAll();
+    }
+
+    public Customer getById(Long id) {
+        return dao.findById(id);
+    }
+
+    public Customer getCurrent() {
+        return userService.getCurrentUser();
     }
 }

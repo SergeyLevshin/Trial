@@ -21,6 +21,7 @@ public class DiscountService {
     public Discount getByProduct(Product product) {
         return dao.getEntityManager()
                 .createQuery("SELECT d FROM Discount d where d.product = :product", Discount.class)
+                .setParameter("product", product)
                 .getSingleResult();
     }
 }

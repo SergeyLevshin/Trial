@@ -5,14 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.levshin.trial.dao.AbstractDAO;
 import ru.levshin.trial.exception.PaymentException;
+import ru.levshin.trial.model.Customer;
 import ru.levshin.trial.model.Item;
 import ru.levshin.trial.model.Product;
 import ru.levshin.trial.model.Purchase;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -27,7 +30,7 @@ public class PurchaseService {
 
     private final ReceiptService receiptService;
 
-    private final UserService userService;
+    private final CustomerService customerService;
 
     @Autowired
     public void setClazz() {
@@ -51,7 +54,7 @@ public class PurchaseService {
             throw new PaymentException("The total sum is different from actual sum of purchase");
         }
         Purchase purchase = new Purchase();
-        purchase.setCustomer(userService.getCurrentUser());
+        purchase.setCustomer(customerService.getCurrent());
         purchase.setPurchaseDate(LocalDateTime.now());
         purchase.setReceipt(receiptService.getReceiptNumber());
         purchase.setItems(new ArrayList<>());
@@ -64,5 +67,21 @@ public class PurchaseService {
             purchase.getItems().add(item);
         }
         dao.create(purchase);
+    }
+
+    public List<Purchase> getByCustomer(Long customerId) {
+        return dao.getEntityManager()
+                .createQuery("SELECT p FROM Purchase p where p.customer.id = :customerId", Purchase.class)
+                .setParameter("customerId", customerId)
+                .getResultList();
+    }
+
+    public List<Purchase> getByProduct(Long productId) {
+        return dao.getEntityManager()
+                .createQuery("select p from Purchase p " +
+//                                        "join purchase_items pi2 on " +
+//                                        "p.id = pi2.purchase_id \n" +
+                                        "join Item i on i.product.id = :productId", Purchase.class)
+                .setParameter("productId", productId).getResultList();
     }
 }
