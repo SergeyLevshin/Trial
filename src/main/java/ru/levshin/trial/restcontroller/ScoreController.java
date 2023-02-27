@@ -3,13 +3,12 @@ package ru.levshin.trial.restcontroller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.levshin.trial.model.Score;
 import ru.levshin.trial.service.ScoreService;
 
-@RestController("score")
+@RestController
+@RequestMapping("/score")
 @AllArgsConstructor
 public class ScoreController {
 

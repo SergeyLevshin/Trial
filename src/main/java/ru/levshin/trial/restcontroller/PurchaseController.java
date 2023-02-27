@@ -9,13 +9,14 @@ import ru.levshin.trial.service.PurchaseService;
 
 import java.util.Map;
 
-@RestController(value = "purchase")
+@RestController
+@RequestMapping("/purchase")
 @AllArgsConstructor
 public class PurchaseController {
 
     private final PurchaseService purchaseService;
 
-    @GetMapping
+    @GetMapping("/totalSum")
     public ResponseEntity<Long> getTotalSum(@RequestParam Map<Long, Integer> purchases) {
         return ResponseEntity.ok(purchaseService.getTotalSum(purchases));
     }

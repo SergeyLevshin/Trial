@@ -11,7 +11,8 @@ import ru.levshin.trial.service.ProductService;
 
 import java.util.List;
 
-@RestController(value = "product")
+@RestController
+@RequestMapping("/product")
 @RequiredArgsConstructor
 public class ProductController {
 
@@ -19,10 +20,10 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getAll() {
-        return ResponseEntity.ok(productService.getAll());
+        return ResponseEntity.ok(productService.getAllLight());
     }
 
-    @GetMapping("/info")
+    @GetMapping("info")
     public ResponseEntity<ProductInfo> getInfo(@RequestParam("id") Long id) {
         return ResponseEntity.ok(productService.getInfo(id));
     }

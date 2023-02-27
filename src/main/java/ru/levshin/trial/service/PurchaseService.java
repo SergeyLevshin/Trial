@@ -5,12 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.levshin.trial.dao.AbstractDAO;
 import ru.levshin.trial.exception.PaymentException;
-import ru.levshin.trial.model.Customer;
-import ru.levshin.trial.model.Item;
-import ru.levshin.trial.model.Product;
-import ru.levshin.trial.model.Purchase;
+import ru.levshin.trial.model.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,7 +20,7 @@ public class PurchaseService {
 
     private final AbstractDAO<Purchase> dao;
 
-    private final ItemService itemService;
+    private final DiscountService discountService;
 
     private final ProductService productService;
 
@@ -37,14 +33,32 @@ public class PurchaseService {
         dao.setClazz(Purchase.class);
     }
 
+    public List<Purchase> getAll() {
+        return dao.findAll();
+    }
+
     public Long getTotalSum(Map<Long, Integer> purchases) {
-        long sum = 0L;
-        //todo if we may have a huge list of purchases this should be refactored to single interaction with database
+        BigDecimal sum = BigDecimal.ZERO;
+        Customer customer = customerService.getCurrent();
+        Discount discount = discountService.getCurrentDiscount();
         for (Map.Entry<Long, Integer> entry: purchases.entrySet()) {
             Product product = productService.getById(entry.getKey());
-            sum += product.getPrice().scaleByPowerOfTen(2).longValue();
+            BigDecimal price = product.getPrice();
+            int finalDiscount = 0;
+            if (product.equals(discount.getProduct())) {
+                if (purchases.size() >= 5 && customer.getDiscount2() != 0) {
+                    finalDiscount = customer.getDiscount2();
+                } else {
+                    finalDiscount = customer.getDiscount1();
+                }
+            }
+            if (finalDiscount > 18) {
+                finalDiscount = 18;
+            }
+            price = price.multiply(BigDecimal.valueOf((100 - finalDiscount)/100));
+            sum = sum.add(price.scaleByPowerOfTen(2));
         }
-        return sum;//todo скидки
+        return sum.longValue();
     }
 
     @Transactional
@@ -54,7 +68,8 @@ public class PurchaseService {
             throw new PaymentException("The total sum is different from actual sum of purchase");
         }
         Purchase purchase = new Purchase();
-        purchase.setCustomer(customerService.getCurrent());
+        Customer customer = customerService.getCurrent();
+        purchase.setCustomer(customer);
         purchase.setPurchaseDate(LocalDateTime.now());
         purchase.setReceipt(receiptService.getReceiptNumber());
         purchase.setItems(new ArrayList<>());
@@ -63,7 +78,18 @@ public class PurchaseService {
             Item item = new Item();
             item.setProduct(product);
             item.setAmount(entry.getValue());
-            item.setFinalPrice(product.getPrice().multiply(BigDecimal.valueOf(entry.getValue())));
+            BigDecimal finalPrice = product.getPrice().multiply(BigDecimal.valueOf(entry.getValue()));
+            Integer finalDiscount = 0;
+            if (purchases.size() >= 5 && customer.getDiscount2() != 0) {
+                finalPrice = finalPrice.multiply(BigDecimal.valueOf((100 - customer.getDiscount2())/100));
+                finalDiscount = customer.getDiscount2();
+            } else {
+                finalPrice = finalPrice.multiply(BigDecimal.valueOf((100 - customer.getDiscount1())/100));
+                finalDiscount = customer.getDiscount1();
+            }
+            item.setInitialPrice(product.getPrice());
+            item.setFinalPrice(finalPrice);
+            item.setFinalDiscount(finalDiscount);
             purchase.getItems().add(item);
         }
         dao.create(purchase);

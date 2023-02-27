@@ -31,8 +31,12 @@ public class ProductService {
         return dao.create(product).getId();
     }
 
-    public List<ProductDTO> getAll() {
-        return dao.findAll().stream().map(ProductDTO::new).collect(Collectors.toList());
+    public List<ProductDTO> getAllLight() {
+        return getAll().stream().map(ProductDTO::new).collect(Collectors.toList());
+    }
+
+    public List<Product> getAll() {
+        return dao.findAll();
     }
 
     public ProductInfo getInfo(Long id) {

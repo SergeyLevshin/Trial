@@ -1,10 +1,15 @@
 package ru.levshin.trial.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "discount")
+@Data
+@NoArgsConstructor
 public class Discount {
 
     @Id
@@ -16,7 +21,14 @@ public class Discount {
 
     private Integer value;
 
-    private LocalDateTime timeStart;
+    private LocalDateTime start;
 
-    private LocalDateTime timeEnd;
+    private LocalDateTime end;
+
+    public Discount(Product product, Integer value, LocalDateTime start, LocalDateTime end) {
+        this.product = product;
+        this.value = value;
+        this.start = start;
+        this.end = end;
+    }
 }

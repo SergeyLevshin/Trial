@@ -9,7 +9,8 @@ import ru.levshin.trial.service.CustomerService;
 
 import java.util.List;
 
-@RestController(value = "customer")
+@RestController
+@RequestMapping("/customer")
 @RequiredArgsConstructor
 public class CustomerController {
 
@@ -25,7 +26,7 @@ public class CustomerController {
         return new ResponseEntity<>(customerService.create(customer), HttpStatus.CREATED);
     }
 
-    @PatchMapping()
+    @PatchMapping
     public ResponseEntity<Customer> updateDiscounts(
             @RequestParam("id") Long id,
             @RequestParam("discount1") Integer discount1,

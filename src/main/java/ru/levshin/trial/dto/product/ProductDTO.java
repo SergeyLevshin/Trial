@@ -1,9 +1,11 @@
 package ru.levshin.trial.dto.product;
 
+import lombok.Data;
 import ru.levshin.trial.model.Product;
 
 import java.math.BigDecimal;
 
+@Data
 public class ProductDTO {
 
     public ProductDTO(Product product) {
