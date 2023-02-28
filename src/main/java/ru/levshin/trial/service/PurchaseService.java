@@ -95,6 +95,16 @@ public class PurchaseService {
         dao.create(purchase);
     }
 
+    @Transactional
+    public String purchaseSoap(Map<Long, Integer> purchases, Long totalSum) {
+        try {
+            purchase(purchases, totalSum);
+        } catch (PaymentException ex) {
+            return ex.getMessage();
+        }
+        return "Успешно";
+    }
+
     public List<Purchase> getByCustomer(Long customerId) {
         return dao.getEntityManager()
                 .createQuery("SELECT p FROM Purchase p where p.customer.id = :customerId", Purchase.class)

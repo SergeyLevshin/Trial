@@ -32,7 +32,7 @@ public interface CustomerWebService {
             className = "ru.levshin.trial.webservice.customer.CustomerWebService")
     @WebMethod(action = "urn:UpdateDiscounts")
     @ResponseWrapper(
-            localName = "updateDiscounts",
+            localName = "updateDiscountsResponce",
             targetNamespace = "http://service.trial/",
             className = "ru.levshin.trial.webservice.customer.CustomerWebServiceImpl")
     Customer updateDiscounts(@WebParam(name = "id") Long id,
