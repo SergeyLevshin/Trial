@@ -82,12 +82,12 @@ public class StatisticService {
 
     private Statistic getByProduct(Long productId) {
         return dao.getEntityManager()
-                .createQuery("SELECT s FROm Statistic s WHERE s.product.id = :productId", Statistic.class)
+                .createQuery("SELECT s FROm Statistic s WHERE s.product.id = :productId", dao.getClazz())
                 .setParameter("productId", productId).getSingleResult();
     }
     private Statistic getByCustomer(Long customerId) {
         return dao.getEntityManager()
-                .createQuery("SELECT s FROm Statistic s WHERE s.customer.id = :customerId", Statistic.class)
+                .createQuery("SELECT s FROm Statistic s WHERE s.customer.id = :customerId", dao.getClazz())
                 .setParameter("customerId", customerId).getSingleResult();
     }
 }

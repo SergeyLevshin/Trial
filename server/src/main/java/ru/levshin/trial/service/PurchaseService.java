@@ -110,7 +110,7 @@ public class PurchaseService {
 
     public List<Purchase> getByCustomer(Long customerId) {
         return dao.getEntityManager()
-                .createQuery("SELECT p FROM Purchase p where p.customer.id = :customerId", Purchase.class)
+                .createQuery("SELECT p FROM Purchase p where p.customer.id = :customerId", dao.getClazz())
                 .setParameter("customerId", customerId)
                 .getResultList();
     }
@@ -118,7 +118,7 @@ public class PurchaseService {
     public List<Purchase> getByProduct(Long productId) {
         return dao.getEntityManager()
                 .createQuery("select p from Purchase p " +
-                                        "join Item i on i.product.id = :productId", Purchase.class)
+                                        "join Item i on i.product.id = :productId", dao.getClazz())
                 .setParameter("productId", productId).getResultList();
     }
 

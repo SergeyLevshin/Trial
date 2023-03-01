@@ -29,7 +29,7 @@ public class DiscountService {
 
     public Discount getByProduct(Product product) {
         return dao.getEntityManager()
-                .createQuery("SELECT d FROM Discount d where d.product = :product", Discount.class)
+                .createQuery("SELECT d FROM Discount d where d.product = :product", dao.getClazz())
                 .setParameter("product", product)
                 .getSingleResult();
     }
@@ -51,8 +51,8 @@ public class DiscountService {
     public Discount getCurrentDiscount() {
         LocalDateTime now = LocalDateTime.now();
         return dao.getEntityManager()
-                .createQuery("SELECT d FROm Discount d WHERE d.startTime <= :now AND d.endTime >= :now",
-                        Discount.class)
+                .createQuery("SELECT d FROM Discount d WHERE d.startTime <= :now AND d.endTime >= :now",
+                        dao.getClazz())
                 .setParameter("now", now).getResultList().stream().max(Comparator.comparing(Discount::getEndTime))
                 .orElse(new Discount());
     }

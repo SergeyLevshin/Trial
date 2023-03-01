@@ -22,6 +22,10 @@ public class ProductService {
 
     private final AbstractDAO<Product> dao;
 
+    private final CustomerService customerService;
+
+    private final ScoreService scoreService;
+
     @Autowired
     public void setClazz() {
         dao.setClazz(Product.class);
@@ -52,7 +56,7 @@ public class ProductService {
         productInfo.setDescription(product.getDescription());
         productInfo.setAverageScore(getAverageScore(product.getScores()));
         productInfo.setScoreDistribution(getScoreDistribution(product.getScores()));
-        productInfo.setCurrentScore(3);//todo
+        productInfo.setCurrentScore(scoreService.getByCustomer(customerService.getCurrent()));
         return productInfo;
     }
 

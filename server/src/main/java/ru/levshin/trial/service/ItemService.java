@@ -21,7 +21,8 @@ public class ItemService {
     }
 
     public List<Item> getByProduct(Product product) {
-        return dao.getEntityManager().createQuery("SELECT i FROM Item  i where i.product = :product", Item.class)
+        return dao.getEntityManager()
+                .createQuery("SELECT i FROM Item i where i.product = :product", dao.getClazz())
                 .setParameter("product", product).getResultList();
     }
 
